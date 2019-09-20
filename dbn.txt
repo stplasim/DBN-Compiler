@@ -1,0 +1,11 @@
+// Comment
+Paper 100
+Pen 0
+Set a 2
+Set b 10
+Sub 10 @b
+Do @a
+{
+  Add 1 @b
+  Line 0 0 0 @b
+}
