@@ -11,11 +11,10 @@ This compiler outputs SVG code
 - [x] Paper
 - [x] Pen
 - [x] Line
-- [ ] Other shapes
+- [x] Other shapes
 - [x] Single Line Comments 
 - [x] Set (variable)
 - [x] Do loop
-- [ ] Conditional loop
 - [x] Variable Operators
 - [ ] Nested block
 
@@ -27,15 +26,40 @@ Paper creates the sheet to draw on. Only one parameter is expected. This changes
 
 ---
 
+The APaper works basically like the normal Paper Keyword with the difference that APaper (Advanced Paper) gives the possibility to change the page size. Currently only grayscales are supported. APaper expects three parameters.
+
+> APaper `color` `width` `height`
+
+---
+
 Pen creates the pen to draw with. Only one parameter is expected. This changes the color of the sheet. Currently only grayscale is supported.
 
 > Pen `value`
 
 ---
 
-Line draws a line. Line expects four parameters which represent X and Y of the two endings. 
+The APan gives the possibility to change the colour of the line. APen expects three parameters from 0 to 100
+
+> APen `Red` `Green` `Blue`
+
+---
+
+
+Line expects four parameters which represent X and Y of the two endings. 
 
 > Line `x1` `y1` `x2` `y2`
+
+---
+
+Circle expects three parameters. Two for the positions X and Y and one for the radius. I don't think I need to explain what is does.
+
+> Circle `x` `y` `r`
+
+---
+
+Ellipse expects four parameters. 
+
+> Ellipse `cx` `cy` `rx` `ry`
 
 ---
 
@@ -49,13 +73,28 @@ You can get the value stored in the variable with @ and the variable name.
 
 --- 
 
-The language currently supports two variable operators. These are Add and Sub. 
+The language currently supports seven variable operators.
 
-> Add `variable` `value`
+**Addition**
+> Add `value` `variable`
 
-or
+**Subtraction**
+> Sub `value` `variable`
 
-> Sub `variable` `value`
+**Multiplication**
+> Mul `value` `variable` 
+
+**Division**
+> Div `value` `variable`
+
+**Modulo**
+> Mod `value` `variable`
+
+**Exponential**
+> Pow `value` `variable`
+
+**Root from N**
+> Root `value` `variable`
 
 ---
 
@@ -89,6 +128,8 @@ Do 11
 }
 ```
 
+---
+
 Draw Star
 ```text
 Paper 100
@@ -107,4 +148,19 @@ Do 10
     Add 10 @b
     Sub 10 @a
 }
+```
+
+---
+
+Draw three coloured lines
+```text
+Paper 100
+APen 100 0 0
+Line 0 25 100 25
+
+APen 0 100 0
+Line 0 50 100 50
+
+APen 0 0 100
+Line 0 75 100 75
 ```
