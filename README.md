@@ -1,6 +1,6 @@
 # DBN Compiler.
 
-A compiler for small drawing language dbn(Design by Numbers). Inspired by John Maeda's book: Design by Numbers.
+A compiler for small drawing language dbn(Design by Numbers).
 
 The original DBN language has only three commands. Paper, Pen and Line. This compiler extends the language with more useful features like variables and loops.  
 
@@ -11,7 +11,7 @@ This compiler outputs SVG code
 - [x] Paper
 - [x] Pen
 - [x] Line
-- [ ] Circle
+- [ ] Other shapes
 - [x] Single Line Comments 
 - [x] Set (variable)
 - [x] Do loop
