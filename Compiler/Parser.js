@@ -1,3 +1,5 @@
+const arithmeticOperations = require('./ArithmeticOperations');
+
 // Create Tokens
 exports.lexer = (code) => {
   const tokens = [];
@@ -51,7 +53,7 @@ exports.parse = (tokens) => {
     body: []
   };
 
-  const findArguments = (name, expectedTypes, expectedLength) => {
+  const findArguments = (name, expectedTypes, expectedLength = expectedTypes.length) => {
     const args = [];
     for(let i = 0; i < expectedLength; i++) {
       const arg = tokens.shift();
@@ -80,23 +82,8 @@ exports.parse = (tokens) => {
     return args;
   };
 
-  const updateVariables = (name, value, operation) => {
-    AST.body.forEach(item => {
-      if(item.type === 'VariableDeclaration' && item.identifier.value === name){
-        switch (operation) {
-          case 'add':
-            item.value.value = `${parseInt(item.value.value) + parseInt(value)}`;
-            break;
 
-          case 'sub':
-            item.value.value = `${parseInt(item.value.value) - parseInt(value)}`;
-            break;
-        }
-      }
-    });
-  };
-
-  const createAST = (type, value) => {
+  const createASTElement = (type, value) => {
     let expression = {};
     if(type === 'word'){
       switch (value) {
@@ -120,7 +107,28 @@ exports.parse = (tokens) => {
               arguments: []
             };
 
-            expression.arguments = findArguments('Paper', ['number'], 1);
+            expression.arguments = findArguments('Paper', ['number']);
+
+            requiredCommands.paper = true;
+          }
+          else {
+            throw 'Paper can only be defined once';
+          }
+          return expression;
+
+        // Advanced Paper
+        case 'APaper':
+          if(!requiredCommands.paper) {
+            expression = {
+              type: 'CallExpression',
+              name: 'APaper',
+              arguments: []
+            };
+
+            expression.arguments = findArguments(
+              'APaper',
+              ['number', 'number', 'number']
+            );
 
             requiredCommands.paper = true;
           }
@@ -136,7 +144,21 @@ exports.parse = (tokens) => {
             arguments: []
           };
 
-          expression.arguments = findArguments('Pen', ['number'], 1);
+          expression.arguments = findArguments('Pen', ['number']);
+
+          return expression;
+
+        case 'APen':
+          expression = {
+            type: 'CallExpression',
+            name: 'APen',
+            arguments: []
+          };
+
+          expression.arguments = findArguments(
+            'APen',
+            ['number', 'number', 'number']
+          );
 
           return expression;
 
@@ -149,10 +171,35 @@ exports.parse = (tokens) => {
 
           expression.arguments = findArguments(
             'Line',
-            ['number', 'number', 'number', 'number'],
-            4
+            ['number', 'number', 'number', 'number']
           );
 
+          return expression;
+
+        case 'Circle':
+          expression = {
+            type: 'CallExpression',
+            name: 'Circle',
+            arguments: []
+          };
+
+          expression.arguments = findArguments(
+            'Circle',
+            ['number', 'number', 'number']
+          );
+        return expression;
+
+        case 'Ellipse':
+          expression = {
+            type: 'CallExpression',
+            name: 'Ellipse',
+            arguments: []
+          };
+
+          expression.arguments = findArguments(
+            'Ellipse',
+            ['number', 'number', 'number', 'number']
+          );
           return expression;
 
         case 'Set':
@@ -168,24 +215,17 @@ exports.parse = (tokens) => {
           return expression;
 
         case 'Add':
-          expression = {
-            type: 'OperatorExpression',
-            name: 'Add',
-            arguments: []
-          };
-          expression.arguments = findArguments('Add', ['number', 'variable'], 2);
-          updateVariables(expression.arguments[1].ref, expression.arguments[0].value, 'add');
-          return expression;
-
         case 'Sub':
-          expression = {
-            type: 'OperatorExpression',
-            name: 'Sub',
-            arguments: []
-          };
-          expression.arguments = findArguments('Sub', ['number', 'variable'], 2);
-          updateVariables(expression.arguments[1].ref, expression.arguments[0].value, 'sub');
-          return expression;
+        case 'Mul':
+        case 'Div':
+        case 'Mod':
+        case 'Pow':
+        case 'Root':
+          return arithmeticOperations(
+            value,
+            findArguments(value, ['number', 'variable'], 2),
+            AST
+          );
 
         case 'Do':
           expression = {
@@ -200,20 +240,16 @@ exports.parse = (tokens) => {
           let block = tokens.shift();
           if(block.type === 'openBlock'){
             while (block.type !== 'closeBlock') {
-              if(block.type !== 'newline' && block.type !== 'openBlock'){
-                expression.block.push(block);
-              }
+              expression.block.push(block);
               block = tokens.shift();
             }
-            const items = [];
             for (let i = 0; i < expression.cycles.value; i++){
               expression.block.forEach(item => {
                 if(item.type !== 'openBlock' && item.type !== 'closeBlock'){
-                  items.unshift(item);
+                  tokens.push(item);
                 }
               });
             }
-            items.forEach(i => tokens.unshift(i));
           }
           else {
             throw `Do Command requires { on new line. Found ${block.type}`;
@@ -229,7 +265,7 @@ exports.parse = (tokens) => {
 
   while (tokens.length > 0) {
     const currentToken = tokens.shift();
-    const exp = createAST(currentToken.type, currentToken.value);
+    const exp = createASTElement(currentToken.type, currentToken.value);
     if(exp !== null){
       AST.body.push(exp);
     }

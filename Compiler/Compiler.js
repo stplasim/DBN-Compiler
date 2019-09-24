@@ -8,27 +8,37 @@ exports.compileText = (code) => {
   return generator(transformer(parser.parse(parser.lexer(code))));
 };
 
-exports.compileFile = (dir, output) => {
-  fs.readFile(dir, 'utf8', (err, data) => {
+exports.compileFile = (inputFile, output) => {
+  fs.readFile(inputFile, 'utf8', (err, data) => {
     if (err) throw err;
     output(generator(transformer(parser.parse(parser.lexer(data)))));
   });
 };
 
-exports.showCompilerSteps = (code) => {
-  console.log('Lexing...');
-  const lx = parser.lexer(code);
-  console.log(lx);
+exports.compileFileReturn = (inputFile, output) => {
+  fs.readFile(inputFile, 'utf8', (err, data) => {
+    if (err) throw err;
+    output(generator(transformer(parser.parse(parser.lexer(data)))));
+  });
+};
 
-  console.log('Parsing...');
-  const pr = parser.parse(lx);
-  console.log(util.inspect(pr, false, null, true));
+exports.showCompilerSteps = (dir) => {
+  fs.readFile(dir, 'utf8', (err, data) => {
+    if (err) throw err;
+    console.log('Lexing...');
+    const lx = parser.lexer(data);
+    console.log(lx);
 
-  console.log('Transforming...');
-  const ta = transformer(pr);
-  console.log(util.inspect(ta, false, null, true));
+    console.log('Parsing...');
+    const pr = parser.parse(lx);
+    console.log(util.inspect(pr, false, null, true));
 
-  console.log('Generating...');
-  const gn = generator(ta);
-  console.log(gn);
+    console.log('Transforming...');
+    const ta = transformer(pr);
+    console.log(util.inspect(ta, false, null, true));
+
+    console.log('Generating...');
+    const gn = generator(ta);
+    console.log(gn);
+  });
 };

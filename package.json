@@ -1,16 +1,14 @@
 {
-    "name": "dbm-to-svg",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-        "test": "jest",
-        "start": "node index.js"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "devDependencies": {
-        "jest": "^24.9.0"
-    }
+  "name": "dbn-compiler",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node index.js"
+  },
+  "author": "Simon Planinschek",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "jest": "^24.9.0"
+  }
 }
